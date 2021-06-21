@@ -2,6 +2,7 @@
 import random
 import string
 import time
+from mysql.connector import connect, Error
 
 Policy = {
     "Upper": 2,
@@ -60,6 +61,8 @@ def welcome():
     return personal_details_dict, menu(first_name)
 
 
+
+
 def menu(first_name):
     word_exit = 'exit'
     running = True
@@ -69,19 +72,51 @@ def menu(first_name):
     print("Please enter the corresponding value for what you would like todo:")
     while running:
         user_action = input(
-            'Check password strength (1), generate a password (2), enter new personal details (3) or type "exit" to exit.')
+            '(1) Check password strength\n(2) Generate a password\n(3) Enter new personal details\n(4) Add a new common password\nOr type "exit" to exit.')
         if user_action == '1':
             return strength_checker()
         elif user_action == '2':
             return pass_generate()
         elif user_action == '3':
             return welcome()
+        elif user_action == '4':
+            return common_password_database()
         elif word_exit in user_action.lower():
             return exit_function()
         else:
             print('Invalid input, try again')
             continue
 
+
+def common_password_database():
+    new_common_password = input("Enter the new common password: ")
+    try:
+            with connect(host = "localhost", user = "root", password = "linux123", database = "password_db") as connection:
+                    with connection.cursor() as cursor:
+                        # with open("Passtext.txt", "r") as file:
+                        #     for password in file:
+                        #         new_common_password = password.strip()
+                        check_command = f"SELECT * FROM `common_password_table` WHERE `common_password` = '{new_common_password}'"
+                        cursor.execute(check_command)
+                        cursor.fetchall()
+                        print(cursor.rowcount, new_common_password)
+                        if cursor.rowcount == 0:
+                            add_command = f"INSERT INTO common_password_table (`password_id`, `common_password`) VALUES (NULL,'{new_common_password}')"
+                            cursor.execute(add_command)
+                            connection.commit()
+                            print("Thank you for finding this password")
+                            time.sleep(5)
+                            menu(first_name)
+                        else:
+                            print('This password is already in the database, thank you.')
+                            time.sleep(5)
+                            menu(first_name)
+                                # cursor.execute("SELECT * FROM `common_password_table`")
+                                # for row in cursor:
+                                #         print (row)
+
+    except Error as e:
+            print(e)
 
 
 def RandomPass():
@@ -325,3 +360,4 @@ def DoB_check(Day, Month, Year, password):
 # Random number generator that will choice weather it will be upper, lower, special characters, or number
 # Second random generator that will decide what will put in that place from the chosen list
 welcome()
+# common_password_database()
