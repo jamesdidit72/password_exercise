@@ -318,12 +318,26 @@ def is_empty(name):
 
 
 def is_Common(Pass):
-    with open('Passtext.txt') as File:
-        if Pass in File.read():
-            print('is common is true')
-            return True
-        else:
-            return False
+def is_Common(Pass):
+    try:
+            with connect(host = "localhost", user = "root", password = "linux123", database = "password_db") as connection:
+                    with connection.cursor() as cursor:
+                        # with open("Passtext.txt", "r") as file:
+                        #     for password in file:
+                        #         new_common_password = password.strip()
+                        check_command = f"SELECT * FROM `common_password_table` WHERE `common_password` = '{Pass.lower()}'"
+                        cursor.execute(check_command)
+                        cursor.fetchall()
+
+                        if cursor.rowcount == 0:
+                            return False
+                        else:
+                            return True
+                                # cursor.execute("SELECT * FROM `common_password_table`")
+                                # for row in cursor:
+                                #         print (row)
+    except Error as e:
+            print(e)
 
 
 def users_name_check(first_name, last_name, password):
