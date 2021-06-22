@@ -5,9 +5,9 @@ block_cipher = None
 
 
 a = Analysis(['password_exercise/password_functions.py'],
-             pathex=['/home/kali/cyberspace/password_exercise'],
+             pathex=['/home/kali/cyber_space_pyinstaller/password_exercise'],
              binaries=[],
-             datas=[],
+             datas=[('Passtext.txt', '.'), ('password.txt', '.')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
